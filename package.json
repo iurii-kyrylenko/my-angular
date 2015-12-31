@@ -1,0 +1,26 @@
+{
+  "name": "myangular",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "gulp test"
+  },
+  "keywords": [],
+  "author": "Iurii Kyrylenko",
+  "license": "ISC",
+  "devDependencies": {
+    "gulp": "^3.9.0",
+    "jasmine-core": "^2.4.1",
+    "karma": "^0.13.16",
+    "karma-jasmine": "^0.3.6",
+    "karma-phantomjs-launcher": "^0.2.2",
+    "phantomjs": "^1.9.19"
+  },
+  "dependencies": {
+    "lodash": "^3.10.1"
+  }
+}
