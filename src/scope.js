@@ -4,6 +4,7 @@ function initWatchVal() {}
 
 function Scope() {
     this.$$watchers = [];
+    this.$$lastDirtyWatch = null;
 }
 
 Scope.prototype.$watch = function(watchFn, listenerFn) {
@@ -15,10 +16,20 @@ Scope.prototype.$watch = function(watchFn, listenerFn) {
     };
 
     this.$$watchers.push(watcher);
+    this.$$lastDirtyWatch = null;
 };
 
 Scope.prototype.$digest = function() {
-    while(this.$$digestOnce()) {}
+    var ttl = 10;
+    var dirty;
+    this.$$lastDirtyWatch = null;
+    do {
+        dirty = this.$$digestOnce();
+        if(dirty && !(--ttl)) {
+            throw "10 digest iterations reached";
+        }
+    }
+    while(dirty);
 };
 
 Scope.prototype.$$digestOnce = function() {
@@ -32,12 +43,16 @@ Scope.prototype.$$digestOnce = function() {
         oldValue = watcher.last;
 
         if(newValue !== oldValue) {
+            self.$$lastDirtyWatch = watcher;
             watcher.last = newValue;
             watcher.listenerFn(
                 newValue,
                 oldValue === initWatchVal ? newValue : oldValue,
                 self);
             dirty = true;
+        }
+        else if(self.$$lastDirtyWatch === watcher) {
+            return false;
         }
     });
 
