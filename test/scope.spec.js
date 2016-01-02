@@ -246,5 +246,44 @@ describe("Scope", function() {
             expect(scope.counter).toBe(1);
 
         });
+
+        it("executes $eval'ed function and returns result", function() {
+            scope.aValue = 42;
+
+            var result = scope.$eval(function(scope) {
+                return scope.aValue;
+            });
+
+            expect(result).toBe(42);
+
+            result = scope.$eval(function(scope, arg) {
+                return scope.aValue + arg;
+            }, 2);
+
+            expect(result).toBe(44);
+        });
+
+        it("executes $apply'ed function and starts the digest", function() {
+            scope.aValue = 'some value';
+            scope.counter = 0;
+
+            scope.$watch(
+                function(scope) {
+                    return scope.aValue;
+                },
+                function(newValue, oldValue, sccope) {
+                    scope.counter++;
+                }
+            );
+
+            scope.$digest();
+            expect(scope.counter).toBe(1);
+
+            scope.$apply(function(scope) {
+                scope.aValue = 'another value';
+            });
+
+            expect(scope.counter).toBe(2);
+        });
     });
 });
